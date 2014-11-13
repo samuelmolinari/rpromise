@@ -1,6 +1,7 @@
 # Rpromise
 
 [![Build Status](https://travis-ci.org/samuelmolinari/rpromise.svg?branch=master)](https://travis-ci.org/samuelmolinari/rpromise)
+[![Gem Version](https://badge.fury.io/rb/rpromise.svg)](http://badge.fury.io/rb/rpromise)
 
 ## Installation
 
