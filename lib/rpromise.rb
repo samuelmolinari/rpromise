@@ -1,5 +1,6 @@
 require "rpromise/version"
+require "rpromise/promise"
+require "rpromise/future"
 
 module Rpromise
-  # Your code goes here...
 end

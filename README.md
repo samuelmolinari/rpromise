@@ -1,7 +1,5 @@
 # Rpromise
 
-TODO: Write a gem description
-
 ## Installation
 
 Add this line to your application's Gemfile:
@@ -18,7 +16,45 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+```ruby
+
+class Task
+
+  def async
+    return ::Rpromise::Promise.new do |resolve, reject|
+      sleep(1)
+      value = Random.rand * 10
+
+      if value > 5
+        resolve.call(value)
+      else
+        reject.call('Oh boy, what have you done')
+      end
+    end
+  end
+
+end
+
+on_resolve = lambda do |value|
+  puts value
+  return ::Rpromise::Promise.new do |resolve, reject|
+    sleep(1)
+    # Do an async task
+    resolve.call(value + 10)
+  end
+end
+
+on_reject = lambda do |error|
+  puts error
+end
+
+Task.new.async
+  .then(on_resolve, on_reject)
+  .then(Proc.new do |value_plus_10|
+    puts value_plus_10 # Returned value from the previous ``then`` promise resolved value
+  end)
+
+```
 
 ## Contributing
 
