@@ -21,7 +21,7 @@ Or install it yourself as:
 class Task
 
   def async
-    return ::Rpromise::Promise.new do |resolve, reject|
+    return ::Rpromise.new do |resolve, reject|
       Thread.new do
         sleep(1)
         value = Random.rand * 10
@@ -41,7 +41,7 @@ on_resolve = lambda do |value|
 
   puts value
 
-  return ::Rpromise::Promise.new do |resolve, reject|
+  return ::Rpromise.new do |resolve, reject|
     Thread.new do
       sleep(1)
       # Do an async task

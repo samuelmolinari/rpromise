@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe ::Rpromise::Promise do
+describe ::Rpromise do
 
   let(:n) { 0 }
   subject(:promise) do
@@ -13,7 +13,7 @@ describe ::Rpromise::Promise do
   describe '#initialize' do
     it 'uses the resolve! method as callback' do
       t = nil
-      p = ::Rpromise::Promise.new do |resolve, reject|
+      p = described_class.new do |resolve, reject|
         t = Thread.new do
           resolve.call('hi')
         end
@@ -24,7 +24,7 @@ describe ::Rpromise::Promise do
 
     it 'uses the reject! method as callback' do
       t = nil
-      p = ::Rpromise::Promise.new do |resolve, reject|
+      p = described_class.new do |resolve, reject|
         t = Thread.new do
           reject.call('hi')
         end
@@ -37,7 +37,7 @@ describe ::Rpromise::Promise do
   describe '#then' do
 
     it 'returns a new promise' do
-      expect(promise.then).to be_kind_of ::Rpromise::Promise
+      expect(promise.then).to be_kind_of described_class
     end
 
     it 'takes an optional block as first argument' do
@@ -61,7 +61,7 @@ describe ::Rpromise::Promise do
       context 'with async task' do
         before(:each) do
           @thread = nil
-          @promise = ::Rpromise::Promise.new do |resolve, reject|
+          @promise = described_class.new do |resolve, reject|
             @thread = Thread.new do
               sleep(0.5)
               resolve.call(value)
@@ -106,7 +106,7 @@ describe ::Rpromise::Promise do
             lambda_value = nil
             lock = true
             @promise.then(lambda do |v|
-              return ::Rpromise::Promise.new do |resolve, reject|
+              return described_class.new do |resolve, reject|
                 thread2 = Thread.new do
                   sleep(0)
                   resolve.call('Hello world!')
@@ -134,7 +134,7 @@ describe ::Rpromise::Promise do
 
       context 'with non-async task' do
         let(:promise) do
-          ::Rpromise::Promise.new do |resolve, reject|
+          described_class.new do |resolve, reject|
             resolve.call(value)
           end
         end
@@ -187,7 +187,7 @@ describe ::Rpromise::Promise do
       context 'with non-async task' do
         let(:error) { Random.rand }
         let(:promise) do
-          ::Rpromise::Promise.new do |resolve, reject|
+          described_class.new do |resolve, reject|
             reject.call(error)
           end
         end
@@ -200,7 +200,7 @@ describe ::Rpromise::Promise do
         end
         it 'handles raised exceptions within the promise' do
           lambda_error = nil
-          promise = ::Rpromise::Promise.new do |resolve, reject|
+          promise = described_class.new do |resolve, reject|
             raise 'Oops'
           end
           promise.then(nil, lambda do |e|
