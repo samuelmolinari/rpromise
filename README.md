@@ -1,5 +1,7 @@
 # Rpromise
 
+[![Build Status](https://travis-ci.org/samuelmolinari/rpromise.svg?branch=master)](https://travis-ci.org/samuelmolinari/rpromise)
+
 ## Installation
 
 Add this line to your application's Gemfile:
