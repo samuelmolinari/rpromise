@@ -22,13 +22,15 @@ class Task
 
   def async
     return ::Rpromise::Promise.new do |resolve, reject|
-      sleep(1)
-      value = Random.rand * 10
+      Thread.new do
+        sleep(1)
+        value = Random.rand * 10
 
-      if value > 5
-        resolve.call(value)
-      else
-        reject.call('Oh boy, what have you done')
+        if value > 5
+          resolve.call(value)
+        else
+          reject.call('Oh boy, what have you done')
+        end
       end
     end
   end
@@ -36,11 +38,15 @@ class Task
 end
 
 on_resolve = lambda do |value|
+
   puts value
+
   return ::Rpromise::Promise.new do |resolve, reject|
-    sleep(1)
-    # Do an async task
-    resolve.call(value + 10)
+    Thread.new do
+      sleep(1)
+      # Do an async task
+      resolve.call(value + 10)
+    end
   end
 end
 
