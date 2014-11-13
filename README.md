@@ -19,11 +19,14 @@ Or install it yourself as:
 
 ## Usage
 
+### Create a promise
+
 ```ruby
 
 class Task
 
   def async
+
     return ::Rpromise.new do |resolve, reject|
       Thread.new do
         sleep(1)
@@ -34,35 +37,76 @@ class Task
         else
           reject.call('Oh boy, what have you done')
         end
+
       end
     end
+
   end
 
 end
 
-on_resolve = lambda do |value|
+```
 
-  puts value
+### Callbacks
 
-  return ::Rpromise.new do |resolve, reject|
-    Thread.new do
-      sleep(1)
-      # Do an async task
-      resolve.call(value + 10)
-    end
+#### Using method
+
+You can use existing methods as callbacks:
+
+```ruby
+def on_resolve(value)
+  # Do something with the returned value from the promise
+end
+
+Task.new.async.then(method(:on_resolve))
+```
+
+#### Using proc
+
+You can use ``Proc`` as a callback
+
+```ruby
+Task.new.async.then(Proc.new do |value|
+  # Do something
+end)
+```
+
+#### Using lambda
+
+You can use ``lambda`` as a callback
+
+```ruby
+Task.new.async.then(lambda do |value|
+  # Do something
+end)
+```
+
+### Chained promises
+
+```ruby
+Rpromise.new do |resolve, reject|
+
+  resolve.call(5)
+
+end.then(lambda do |value|
+
+  # value == 5
+  return value + 10
+
+end).then(lambda do |value|
+
+  # value == 15
+  return Rpromise.new do |resolve, reject|
+
+    Thread.new { resolve.call(value / 5) }
+
   end
-end
 
-on_reject = lambda do |error|
-  puts error
-end
+end).then(lambda do |value|
 
-Task.new.async
-  .then(on_resolve, on_reject)
-  .then(Proc.new do |value_plus_10|
-    puts value_plus_10 # Returned value from the previous ``then`` promise resolved value
-  end)
+  # value == 3
 
+end)
 ```
 
 ## Contributing
