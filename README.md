@@ -152,7 +152,7 @@ end)
 or you can convert a method to a promise
 
 ```ruby
-promise = 100.to_rpromise
+promise = 100.method(:to_s).to_rpromise
 
 promise.then(lambda do |value|
   value[0...2] # => "10"
