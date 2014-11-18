@@ -1,4 +1,5 @@
 require 'rpromise/version'
+require 'method'
 
 class Rpromise
   module State

@@ -149,6 +149,16 @@ promise.then(lambda do |value|
 end)
 ```
 
+or you can convert a method to a promise
+
+```ruby
+promise = 100.to_rpromise
+
+promise.then(lambda do |value|
+  value[0...2] # => "10"
+end)
+```
+
 ## Contributing
 
 1. Fork it
