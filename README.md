@@ -137,6 +137,18 @@ end, lambda do |err|
 end)
 ```
 
+### Convert method to promise
+
+You can convert any method into a promise
+
+```ruby
+promise = Rpromise.from_method(100, :to_s)
+
+promise.then(lambda do |value|
+  value[0...2] # => "10"
+end)
+```
+
 ## Contributing
 
 1. Fork it

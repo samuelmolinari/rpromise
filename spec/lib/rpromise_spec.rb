@@ -243,4 +243,55 @@ describe ::Rpromise do
     end
   end
 
+  describe '.from_method' do
+    MyObject = Struct.new(:store) do
+      def method_with_args(*args)
+        return args
+      end
+      def method_with_block
+        yield
+      end
+    end
+
+    before(:each) do
+      @obj = MyObject.new('Hello World')
+    end
+
+    it 'converts method to a running promise' do
+      lambda_value = nil
+      lock = true
+      promise = Rpromise.from_method(@obj, :store)
+      promise.then(lambda do |store_value|
+        lambda_value = store_value
+        lock = false
+      end)
+      loop { break unless lock }
+      expect(lambda_value).to eq 'Hello World'
+    end
+
+    it 'passes the method arguments' do
+      promise = Rpromise.from_method(@obj, :method_with_args, 1, 2, 3, 'test')
+      lambda_value = nil
+      lock = true
+      promise.then(lambda do |value|
+        lambda_value = value
+        lock = false
+      end)
+      loop { break unless lock }
+      expect(lambda_value).to eq [1,2,3,'test']
+    end
+
+    it 'passes the method block' do
+      promise = Rpromise.from_method(@obj, :method_with_block) { 'Block' }
+      lambda_value = nil
+      lock = true
+      promise.then(lambda do |value|
+        lambda_value = value
+        lock = false
+      end)
+      loop { break unless lock }
+      expect(lambda_value).to eq 'Block'
+    end
+  end
+
 end

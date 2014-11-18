@@ -69,6 +69,12 @@ class Rpromise
     end
   end
 
+  def self.from_method(obj, method_name, *args, &block)
+    Rpromise.new do |resolve, reject|
+      resolve.call(obj.method(method_name).call(*args,&block))
+    end
+  end
+
   protected
 
   def is_valid_block?(arg)
