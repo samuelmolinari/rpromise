@@ -2,6 +2,8 @@
 
 [![Build Status](https://travis-ci.org/samuelmolinari/rpromise.svg?branch=master)](https://travis-ci.org/samuelmolinari/rpromise)
 [![Gem Version](https://badge.fury.io/rb/rpromise.svg)](http://badge.fury.io/rb/rpromise)
+[![Code Climate](https://codeclimate.com/github/samuelmolinari/rpromise/badges/gpa.svg)](https://codeclimate.com/github/samuelmolinari/rpromise)
+[![Test Coverage](https://codeclimate.com/github/samuelmolinari/rpromise/badges/coverage.svg)](https://codeclimate.com/github/samuelmolinari/rpromise)
 
 ## Installation
 

@@ -1,3 +1,6 @@
+require "codeclimate-test-reporter"
+CodeClimate::TestReporter.start
+
 require 'rpromise'
 
 RSpec.configure do |config|
