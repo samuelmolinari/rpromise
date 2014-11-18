@@ -28,21 +28,16 @@ Or install it yourself as:
 class Task
 
   def async
+    ::Rpromise.new do |resolve, reject|
+      sleep(1)
+      value = Random.rand * 10
 
-    return ::Rpromise.new do |resolve, reject|
-      Thread.new do
-        sleep(1)
-        value = Random.rand * 10
-
-        if value > 5
-          resolve.call(value)
-        else
-          reject.call('Oh boy, what have you done')
-        end
-
+      if value > 5
+        resolve.call(value)
+      else
+        reject.call('Oh boy, what have you done')
       end
     end
-
   end
 
 end
@@ -93,21 +88,52 @@ Rpromise.new do |resolve, reject|
 end.then(lambda do |value|
 
   # value == 5
-  return value + 10
+  value + 10
 
 end).then(lambda do |value|
 
   # value == 15
-  return Rpromise.new do |resolve, reject|
-
-    Thread.new { resolve.call(value / 5) }
-
+  Rpromise.new do |resolve, reject|
+    resolve.call(value / 5)
   end
 
 end).then(lambda do |value|
 
   # value == 3
 
+end)
+```
+
+#### Error handling
+
+You can handle errors raised during the async task by passing a callback block as second argument
+
+```ruby
+p = Rpromise.new do |resolve, reject|
+  raise 'Oopss'
+end
+
+p.then(nil, lambda do |err|
+  err.message # => "Oopss"
+end)
+```
+
+or you can handle the exceptions yourself by making use of the reject callback
+
+```ruby
+p = Rpromise.new do |resolve, reject|
+  begin
+    method_that_could_raise_an_exception()
+    resolve('Everything went ok')
+  rescue Exception => e
+    reject.call('Oh dear, what have I done?!')
+  end
+end
+
+p.then(lambda do |message|
+  # Called if the promise executed without exceptions
+end, lambda do |err|
+  # Called if the promise has raised an exception
 end)
 ```
 
