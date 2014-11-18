@@ -9,12 +9,18 @@ class Rpromise
 
   Handler = Struct.new(:on_resolved, :on_rejected, :resolve, :reject)
 
-  attr_reader :state
+  attr_reader :state, :thread
 
   def initialize()
     @state = State::PENDING
     @defered = nil
-    yield(method(:resolve!), method(:reject!),self)
+    @thread = Thread.new do
+      begin
+        yield(method(:resolve!), method(:reject!))
+      rescue Exception => e
+        reject!(e)
+      end
+    end
   rescue Exception => e
     reject!(e)
   end
@@ -23,9 +29,9 @@ class Rpromise
     raise ArgumentError unless is_valid_block?(on_resolved)
     raise ArgumentError unless is_valid_block?(on_rejected)
     return self if on_resolved.nil? && on_rejected.nil?
-    return ::Rpromise.new do |resolve, reject, promise|
+    return ::Rpromise.new do |resolve, reject|
       handler = Handler.new(on_resolved, on_rejected, resolve, reject)
-      self.handle(handler)
+      handle(handler)
     end
   end
 
@@ -53,9 +59,6 @@ class Rpromise
     unless @defered.nil?
       handle(@defered)
     end
-
-  rescue
-    reject!(nil)
   end
 
   def reject!(value = nil)
@@ -92,7 +95,5 @@ class Rpromise
       output = callback.call(@value)
       handler.resolve.call(output) unless handler.resolve.nil?
     end
-  rescue
-    handler.reject.call(nil) unless handler.reject.nil?
   end
 end
