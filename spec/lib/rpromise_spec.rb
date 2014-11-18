@@ -5,6 +5,7 @@ describe ::Rpromise do
   let(:n) { 0 }
   subject(:promise) do
     described_class.new do |resolve, reject|
+      sleep(0.1)
     end
   end
 
@@ -14,6 +15,7 @@ describe ::Rpromise do
     it 'uses the resolve! method as callback' do
       lock = true
       p = described_class.new do |resolve, reject|
+        sleep(0.1)
         resolve.call('hi')
         lock = false
       end
@@ -24,6 +26,7 @@ describe ::Rpromise do
     it 'uses the reject! method as callback' do
       lock = true
       p = described_class.new do |resolve, reject|
+        sleep(0.1)
         reject.call('hi')
         lock = false
       end
@@ -57,6 +60,7 @@ describe ::Rpromise do
 
       before(:each) do
         @promise = described_class.new do |resolve, reject|
+          sleep(0.1)
           resolve.call(value)
         end
       end
@@ -104,6 +108,7 @@ describe ::Rpromise do
           @promise.then(lambda do |v|
             return described_class.new do |resolve, reject|
               thread2 = Thread.new do
+                sleep(0.1)
                 resolve.call('Hello world!')
               end
             end
@@ -136,6 +141,7 @@ describe ::Rpromise do
         lambda_error = nil
         lock = true
         p = described_class.new do |resolve, reject|
+          sleep(0.1)
           reject.call(error)
         end
         p.then(nil, lambda do |e|
@@ -149,6 +155,7 @@ describe ::Rpromise do
         lambda_error = nil
         lock = true
         p = described_class.new do |resolve, reject|
+          sleep(0.1)
           raise 'Oops'
         end
         p.then(nil, lambda do |e|
