@@ -17,12 +17,11 @@ class Rpromise
     @thread = Thread.new do
       begin
         yield(method(:resolve!), method(:reject!))
-      rescue Exception => e
+      rescue => e
         reject!(e)
       end
     end
-  rescue Exception => e
-    reject!(e)
+    @thread.abort_on_exception = true
   end
 
   def then(on_resolved = nil, on_rejected = nil)

@@ -151,6 +151,7 @@ describe ::Rpromise do
         loop { break unless lock }
         expect(lambda_error).to eq error
       end
+
       it 'handles raised exceptions within the promise' do
         lambda_error = nil
         lock = true
@@ -166,8 +167,24 @@ describe ::Rpromise do
         expect(lambda_error).to be_kind_of RuntimeError
         expect(lambda_error.message).to eq 'Oops'
       end
-      xit 'handles raised exceptions within resolve!'
-      xit 'handles raised exceptions within handle!'
+
+      it 'handles raised exceptions within resolve!' do
+        lambda_error = nil
+        lock = true
+        p = described_class.new do |resolve, reject|
+          sleep(0.1)
+          resolve.call(true)
+        end
+        # Skip the lambda argument to generate an error
+        p.then(lambda do
+          lock = false
+        end, lambda do |err|
+          lambda_error = err
+          lock = false
+        end)
+        loop { break unless lock }
+        expect(lambda_error).to be_kind_of ArgumentError
+      end
     end
   end
 
