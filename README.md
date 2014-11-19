@@ -124,7 +124,7 @@ or you can handle the exceptions yourself by making use of the reject callback
 p = Rpromise.new do |resolve, reject|
   begin
     method_that_could_raise_an_exception()
-    resolve('Everything went ok')
+    resolve.call('Everything went ok')
   rescue Exception => e
     reject.call('Oh dear, what have I done?!')
   end
